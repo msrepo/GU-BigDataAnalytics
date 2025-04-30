@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CISI Documents</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .document {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+      .pagination {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .pagination button {
+        margin: 0 5px;
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CISI Documents</h1>
+    <div id="documents"></div>
+    <div class="pagination">
+      <button id="prev" disabled>Previous</button>
+      <span id="page-info"></span>
+      <button id="next">Next</button>
+    </div>
+
+    <script>
+      const documentsPerPage = 5;
+      let currentPage = 1;
+      let documents = [];
+
+      // Fetch the JSON data
+      fetch("cisi_data.json")
+        .then((response) => response.json())
+        .then((data) => {
+          documents = data;
+          renderPage();
+        });
+
+      // Render the current page
+      function renderPage() {
+        const start = (currentPage - 1) * documentsPerPage;
+        const end = start + documentsPerPage;
+        const currentDocuments = documents.slice(start, end);
+
+        const documentsDiv = document.getElementById("documents");
+        documentsDiv.innerHTML = "";
+
+        currentDocuments.forEach((doc) => {
+          const docDiv = document.createElement("div");
+          docDiv.className = "document";
+          // Render Cross-References as clickable links
+          const crossRefsHTML =
+            doc.CrossRefs.length > 0
+              ? doc.CrossRefs.map(
+                  (ref) =>
+                    `<span class="cross-ref" data-id="${ref.ReferencedID}" style="cursor: pointer; color: blue;">${ref.ReferencedID}</span>`
+                ).join(", ")
+              : "None";
+
+          docDiv.innerHTML = `
+                    <h2>ID: ${doc.ID}</h2>
+                    <h3>Title: ${doc.Title}</h3>
+                    <p><strong>Author:</strong> ${doc.Author}</p>
+                    <p><strong>Abstract:</strong> ${doc.Abstract}</p>
+                <p><strong>Cross-References:</strong> ${crossRefsHTML}</p>
+                `;
+          documentsDiv.appendChild(docDiv);
+        });
+
+        // Update pagination info
+        document.getElementById(
+          "page-info"
+        ).textContent = `Page ${currentPage} of ${Math.ceil(
+          documents.length / documentsPerPage
+        )}`;
+        document.getElementById("prev").disabled = currentPage === 1;
+        document.getElementById("next").disabled =
+          currentPage === Math.ceil(documents.length / documentsPerPage);
+
+        // Add event listeners to cross-reference links
+        document.querySelectorAll(".cross-ref").forEach((ref) => {
+          ref.addEventListener("click", (event) => {
+            const refID = event.target.getAttribute("data-id");
+            navigateToDocument(refID);
+          });
+        });
+      }
+
+      // Navigate to a specific document by ID
+      function navigateToDocument(docID) {
+        const docIndex = documents.findIndex((doc) => doc.ID === docID);
+        if (docIndex !== -1) {
+          currentPage = Math.floor(docIndex / documentsPerPage) + 1;
+          renderPage();
+        } else {
+          alert("Document not found!");
+        }
+      }
+
+      // Pagination buttons
+      document.getElementById("prev").addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage();
+        }
+      });
+
+      document.getElementById("next").addEventListener("click", () => {
+        if (currentPage < Math.ceil(documents.length / documentsPerPage)) {
+          currentPage++;
+          renderPage();
+        }
+      });
+    </script>
+  </body>
+</html>
