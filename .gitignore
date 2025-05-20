@@ -2,3 +2,5 @@ venv
 mining-massive-datasets-stanford
 books
 working_dir/cs246
+datasets/cs246
+word_counts_pyspark
