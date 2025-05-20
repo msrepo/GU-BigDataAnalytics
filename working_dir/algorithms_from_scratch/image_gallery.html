@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Image Gallery with LSH</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; margin: 20px; }
+        .gallery img { margin: 5px; width: 50px; height: 50px; object-fit: cover; cursor: pointer; }
+        .pagination { text-align: center; margin: 20px; overflow-x: auto; white-space: nowrap; }
+        .pagination a { display: inline-block; margin: 0 5px; text-decoration: none; color: blue; padding: 5px 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .pagination a.active { font-weight: bold; color: white; background-color: blue; }
+        .pagination a:hover { background-color: #f0f0f0; }
+
+        /* Modal styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
+        .modal img { width: 200px; height: 200px; object-fit: cover; transform: scale(2); margin-bottom: 20px; }
+        .modal .similar-images { display: flex; flex-wrap: wrap; justify-content: center; }
+        .modal .similar-images img { margin: 5px; width: 50px; height: 50px; object-fit: cover; }
+        .modal .close { position: absolute; top: 20px; right: 20px; color: white; font-size: 24px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="gallery" id="gallery"></div>
+    <div class="pagination" id="pagination"></div>
+
+    <!-- Modal -->
+    <div class="modal" id="imageModal">
+        <span class="close" id="closeModal">&times;</span>
+        <img id="modalImage" src="" alt="Zoomed Image">
+        <h3 style="color: white; margin-top: 20px;">Similar Images</h3>
+        <div class="similar-images" id="similarImages"></div>
+    </div>
+    
+    <script>
+        // Configuration
+        const imagesPerPage = 100; // 10 columns x 10 rows
+        const totalImages = 59499; // Total number of images
+        const imagePath = "../../datasets/cs246/hw1-bundle/q4/data/image_patches/patch-";
+
+        // Simulated LSH data (replace this with actual LSH results from your backend)
+        const lshBuckets = {
+            "patch-1.png": ["2.png", "3.png", "4.png"],
+            "patch-2.png": ["1.png", "5.png", "6.png"],
+            // Add more buckets for other images
+        };
+
+        // Generate pagination links
+        const totalPages = Math.ceil(totalImages / imagesPerPage);
+        const paginationDiv = document.getElementById("pagination");
+        for (let i = 1; i <= totalPages; i++) {
+            const link = document.createElement("a");
+            link.href = "javascript:void(0);";
+            link.textContent = i;
+            link.onclick = () => loadPage(i);
+            if (i === 1) link.classList.add("active");
+            paginationDiv.appendChild(link);
+        }
+
+        // Load images for a specific page
+        function loadPage(page) {
+            const galleryDiv = document.getElementById("gallery");
+            galleryDiv.innerHTML = ""; // Clear current images
+
+            const startIndex = (page - 1) * imagesPerPage + 1;
+            const endIndex = Math.min(startIndex + imagesPerPage - 1, totalImages);
+
+            for (let i = startIndex; i <= endIndex; i++) {
+                const img = document.createElement("img");
+                img.src = `${imagePath}${i}.png`;
+                img.alt = `patch-${i}`;
+                img.onclick = () => openModal(img.src); // Attach click event to open modal
+                galleryDiv.appendChild(img);
+            }
+
+            // Update active pagination link
+            const links = paginationDiv.querySelectorAll("a");
+            links.forEach(link => link.classList.remove("active"));
+            links[page - 1].classList.add("active");
+
+            // Scroll the active link into view
+            links[page - 1].scrollIntoView({ behavior: "smooth", inline: "center" });
+        }
+
+        // Open modal with the clicked image and similar images
+        function openModal(imageSrc) {
+            const modal = document.getElementById("imageModal");
+            const modalImage = document.getElementById("modalImage");
+            const similarImagesDiv = document.getElementById("similarImages");
+
+            modalImage.src = imageSrc;
+            similarImagesDiv.innerHTML = ""; // Clear previous similar images
+
+            // Find similar images using LSH buckets
+            const imageName = imageSrc.split("/").pop(); // Extract image name from path
+            const similarImages = lshBuckets[imageName] || []; // Get similar images from LSH buckets
+
+            // Add similar images to the modal
+            similarImages.forEach(similarImage => {
+                const img = document.createElement("img");
+                img.src = `${imagePath}${similarImage}`;
+                img.alt = similarImage;
+                similarImagesDiv.appendChild(img);
+            });
+
+            modal.style.display = "flex";
+        }
+
+        // Close modal
+        const closeModal = document.getElementById("closeModal");
+        closeModal.onclick = () => {
+            const modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        };
+
+        // Close modal when clicking outside the image
+        window.onclick = (event) => {
+            const modal = document.getElementById("imageModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Load the first page initially
+        loadPage(1);
+    </script>
+</body>
+</html>
