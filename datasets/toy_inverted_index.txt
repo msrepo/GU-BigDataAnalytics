@@ -1,0 +1,3 @@
+doc1    apple banana
+doc2    banana cherry
+doc3    apple cherry banana
