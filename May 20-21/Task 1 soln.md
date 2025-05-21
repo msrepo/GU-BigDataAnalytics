@@ -26,29 +26,6 @@ Data is automatically split into chunks (input splits). Hadoop re-executes faile
 
 ### Task 2.1: Largest Integer in a Large Dataset
 
-#### Naive Implementation (MapReduce Style)
-
-```python
-# mapper.py
-import sys
-
-for line in sys.stdin:
-    numbers = map(int, line.strip().split())
-    print("max\t" + str(max(numbers)))
-```
-
-```python
-# reducer.py
-import sys
-
-max_value = float('-inf')
-
-for line in sys.stdin:
-    key, value = line.strip().split('\t')
-    max_value = max(max_value, int(value))
-
-print("Maximum Value:", max_value)
-```
 
 #### PySpark Implementation
 
@@ -66,32 +43,6 @@ print("Maximum Value:", max_val)
 
 ### Task 2.2: Word Frequency Counter
 
-#### Naive Implementation (MapReduce Style)
-
-```python
-# mapper.py
-import sys
-
-for line in sys.stdin:
-    words = line.strip().split()
-    for word in words:
-        print(f"{word}\t1")
-```
-
-```python
-# reducer.py
-import sys
-from collections import defaultdict
-
-word_count = defaultdict(int)
-
-for line in sys.stdin:
-    word, count = line.strip().split('\t')
-    word_count[word] += int(count)
-
-for word, count in word_count.items():
-    print(f"{word}\t{count}")
-```
 
 #### PySpark Implementation
 
@@ -114,32 +65,6 @@ counts.saveAsTextFile("word_counts")
 
 ### Task 3.1: Inverted Index Creation
 
-#### Naive Implementation
-
-```python
-# mapper.py
-import sys
-
-for line in sys.stdin:
-    doc_id, text = line.strip().split('\t', 1)
-    for word in set(text.split()):
-        print(f"{word}\t{doc_id}")
-```
-
-```python
-# reducer.py
-import sys
-from collections import defaultdict
-
-index = defaultdict(set)
-
-for line in sys.stdin:
-    word, doc_id = line.strip().split('\t')
-    index[word].add(doc_id)
-
-for word, doc_ids in index.items():
-    print(f"{word}\t{','.join(doc_ids)}")
-```
 
 #### PySpark Implementation
 
@@ -161,35 +86,6 @@ index.saveAsTextFile("inverted_index")
 
 ### Task 3.2: Average Temperature by Location
 
-#### Naive Implementation
-
-```python
-# mapper.py
-import sys
-
-for line in sys.stdin:
-    location, date, temp = line.strip().split(',')
-    print(f"{location}\t{temp}")
-```
-
-```python
-# reducer.py
-import sys
-from collections import defaultdict
-
-sums = defaultdict(float)
-counts = defaultdict(int)
-
-for line in sys.stdin:
-    location, temp = line.strip().split('\t')
-    sums[location] += float(temp)
-    counts[location] += 1
-
-for location in sums:
-    avg = sums[location] / counts[location]
-    print(f"{location}\t{avg:.2f}")
-```
-
 #### PySpark Implementation
 
 ```python
@@ -210,34 +106,6 @@ averages.saveAsTextFile("average_temps")
 
 ### Task 3.3: Popular Product in E-Commerce Dataset
 
-#### Naive Implementation
-
-```python
-# mapper.py
-import sys
-
-for line in sys.stdin:
-    user_id, product_id, timestamp = line.strip().split(',')
-    print(f"{product_id}\t1")
-```
-
-```python
-# reducer.py
-import sys
-from collections import defaultdict
-
-product_counts = defaultdict(int)
-
-for line in sys.stdin:
-    product_id, count = line.strip().split('\t')
-    product_counts[product_id] += int(count)
-
-max_count = max(product_counts.values())
-
-for product, count in product_counts.items():
-    if count == max_count:
-        print(f"Most Popular Product: {product} with {count} purchases")
-```
 
 #### PySpark Implementation
 
