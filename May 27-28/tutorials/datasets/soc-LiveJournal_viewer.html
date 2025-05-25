@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #f1f1f1;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Network Viewer</h1>
+    <div class="container">
+        <label for="userId">Enter User ID:</label>
+        <input type="text" id="userId" placeholder="Enter a user ID (e.g., 1)">
+        <button onclick="searchUser()">Search</button>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        // Adjacency list data (loaded directly into the browser)
+        const adjacencyList = {
+            0: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94],
+            1: [0, 5, 20, 135, 2409, 8715, 8932, 10623, 12347, 12846, 13840, 13845, 14005, 20075, 21556, 22939, 23520, 28193, 29724, 29791, 29826, 30691, 31232, 31435, 32317, 32489, 34394, 35589, 35605, 35606, 35613, 35633, 35648, 35678, 38737, 43447, 44846, 44887, 49226, 49985, 623, 629, 4999, 6156, 13912, 14248, 15190, 17636, 19217, 20074, 27536, 29481, 29726, 29767, 30257, 33060, 34250, 34280, 34392, 34406, 34418, 34420, 34439, 34450, 34651, 45054, 49592],
+            2: [0, 117, 135, 1220, 2755, 12453, 24539, 24714, 41456, 45046, 49927, 6893, 13795, 16659, 32828, 41878],
+            3: [0, 12, 41, 55, 1532, 12636, 13185, 27552, 38737],
+            4: [0, 8, 14, 15, 18, 27, 72, 80, 15326, 19068, 19079, 24596, 42697, 46126, 74, 77, 33269, 38792, 38822],
+            5: [0, 1, 20, 2022, 22939, 23527, 30257, 32503, 35633, 41457, 43262, 44846, 49574, 31140, 32828],
+            // Add more entries as needed
+        };
+
+        // Function to search for a user and display their friends
+        function searchUser() {
+            const userIdInput = document.getElementById("userId").value;
+            const resultsDiv = document.getElementById("results");
+
+            // Clear previous results
+            resultsDiv.innerHTML = "";
+
+            // Validate input
+            if (!userIdInput || isNaN(userIdInput)) {
+                resultsDiv.innerHTML = `<p class="error">Please enter a valid numeric User ID.</p>`;
+                return;
+            }
+
+            const userId = parseInt(userIdInput);
+
+            // Check if the user exists in the adjacency list
+            if (adjacencyList[userId]) {
+                const friends = adjacencyList[userId];
+                resultsDiv.innerHTML = `
+                    <h3>Friends of User ${userId}:</h3>
+                    <ul>
+                        ${friends.map(friend => `<li>${friend}</li>`).join("")}
+                    </ul>
+                `;
+            } else {
+                resultsDiv.innerHTML = `<p class="error">User ID ${userId} not found.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

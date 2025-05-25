@@ -1,2 +1,4 @@
 pyspark
 matplotlib
+networkx
+scipy
