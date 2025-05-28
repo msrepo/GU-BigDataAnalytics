@@ -10,7 +10,7 @@ Build a Spark program that implements a simple **“People You Might Know”** a
 ## 📁 Dataset
 
 - **File Name:** `soc-LiveJournal1Adj.txt`
-- **Path:** `q1/data/soc-LiveJournal1Adj.txt`
+- **Path:** `datasets/soc-LiveJournal1Adj.txt`
 - **Format (per line):**
 
   ```
