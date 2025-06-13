@@ -1,4 +1,5 @@
 📚 Tasks: Collaborative Plagiarism Detection Dataset Creation
+
 🧠 Objective:
 
 Create a labeled dataset for training and testing plagiarism detection algorithms. Students will collaboratively author original and plagiarized short paragraphs in response to Big Data Analytics questions, simulating different types and levels of plagiarism.
@@ -67,6 +68,8 @@ Due Tuesday (Next Class)
   "source_answer_id": ""
 }
 
+Please create a text file in the above format.
+
 🔹 Milestone 3: Plagiarism Simulation
 
 Due Friday (One Week from today)
@@ -98,7 +101,7 @@ Each student chooses 2 original answers written by a peer (assigned by instructo
   "question_id": "Q2",
   "author_id": "S23",
   "text": "Streaming processing allows...",
-  "label": "plagiarized_l1",
+  "label": "plagiarized_light",
   "source_answer_id": "A12"
 }
 
