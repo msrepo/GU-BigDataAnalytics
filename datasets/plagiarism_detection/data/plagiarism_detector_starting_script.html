@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        td {
+            background-color: #f1f1f1;
+        }
+        .file-content {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dataset Explorer</h1>
+    <div class="container">
+        <label for="taskCategory">Task Category:</label>
+        <select id="taskCategory">
+            <option value="all">All</option>
+        </select>
+
+        <button onclick="filterData()">Filter</button>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Task Category</th>
+                    <th>View Content</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+
+        <div id="fileContent" class="file-content" style="display: none;">
+            <h3>File Content:</h3>
+            <pre id="content"></pre>
+        </div>
+    </div>
+
+    <script>
+        let dataset = [];
+
+        // Read the CSV file and parse its contents
+        async function loadCSV() {
+            const response = await fetch("file_information.csv");
+            const csvText = await response.text();
+            const rows = csvText.split("\n").slice(1).filter(row => row.trim() !== "");
+
+            dataset = rows.map(row => {
+                const [fileName, taskCategory] = row.split(","); // Ignore plagiarism category
+                return { fileName, taskCategory };
+            });
+
+            populateDropdowns();
+            filterData();
+        }
+
+        // Populate dropdowns
+        function populateDropdowns() {
+            const taskCategoryDropdown = document.getElementById("taskCategory");
+
+            const taskCategories = [...new Set(dataset.map(item => item.taskCategory))];
+
+            taskCategories.forEach(category => {
+                const option = document.createElement("option");
+                option.value = category;
+                option.textContent = category;
+                taskCategoryDropdown.appendChild(option);
+            });
+        }
+
+        // Filter and display data
+        function filterData() {
+            const taskCategory = document.getElementById("taskCategory").value;
+
+            const filteredData = dataset.filter(item => {
+                return taskCategory === "all" || item.taskCategory === taskCategory;
+            });
+
+            const tableBody = document.getElementById("dataTable").querySelector("tbody");
+            tableBody.innerHTML = "";
+
+            filteredData.forEach(item => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${item.fileName}</td>
+                    <td>${item.taskCategory}</td>
+                    <td><button onclick="viewFileContent('${item.fileName}')">View</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // View file content
+        function viewFileContent(fileName) {
+            const fileContentDiv = document.getElementById("fileContent");
+            const contentPre = document.getElementById("content");
+
+            // Clear previous content
+            contentPre.textContent = "";
+            fileContentDiv.style.display = "none";
+
+            // Fetch file content
+            fetch(fileName)
+                .then(response => response.text())
+                .then(text => {
+                    contentPre.textContent = text;
+                    fileContentDiv.style.display = "block";
+                })
+                .catch(error => {
+                    contentPre.textContent = "Error loading file content.";
+                    console.error("Error fetching file:", error);
+                });
+        }
+
+        // Load the CSV file on page load
+        loadCSV();
+    </script>
+</body>
+</html>
