@@ -1,0 +1,20 @@
+file_name,jaccard_index,cosine_similarity
+g4pC_taska.txt,0.9467 ,0.9833
+g0pE_taska.txt,0.9240 ,0.9766
+g2pE_taska.txt,0.7108 ,0.8949
+g0pD_taska.txt,0.5805 ,0.8930
+g3pC_taska.txt,0.4647 ,0.8264
+g2pC_taska.txt,0.4394 ,0.8257
+g4pD_taska.txt,0.4109 ,0.7694
+g1pD_taska.txt,0.3860 ,0.7955
+g0pC_taska.txt,0.2500 ,0.7241
+g4pE_taska.txt,0.2488 ,0.5214
+g3pA_taska.txt,0.1839 ,0.6972
+g1pA_taska.txt,0.1724 ,0.6237
+g0pB_taska.txt,0.1600 ,0.5319
+g2pA_taska.txt,0.1504 ,0.5917
+g2pB_taska.txt,0.1500 ,0.5825
+g4pB_taska.txt,0.1485 ,0.5866
+g3pB_taska.txt,0.1463 ,0.6181
+g0pA_taska.txt,0.1447 ,0.5471
+g1pB_taska.txt,0.1144 ,0.5579
